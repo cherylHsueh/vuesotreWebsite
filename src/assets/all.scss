@@ -1,0 +1,4 @@
+@import "~bootstrap/scss/functions";//bootstrap載入套用變數的方法，有這些方法，這些變數才能正確的啟用
+@import "./helpers/variables"; //自定義變數
+@import "~bootstrap/scss/bootstrap"
+

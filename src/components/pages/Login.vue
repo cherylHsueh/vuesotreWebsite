@@ -37,7 +37,7 @@
 					console.log(response.data)
 					//如果成功就導到首頁
 					if(response.data.success){
-						vm.$router.push('/')
+						vm.$router.push('/admin/Products')
 					}
 				})
 			}

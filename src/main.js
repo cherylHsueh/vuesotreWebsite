@@ -21,24 +21,24 @@ new Vue({
 //meta是路由訊息
 router.beforeEach((to, from, next) => {
   // console.log('to',to,'from',from,'next',next);
-  if(to.meta.requiresAuth){
-    //不放行
-    console.log('這裡需要驗證')
-    const api = `${process.env.VUE_APP_API}/api/user/check`
-    axios.post(api).then((response) => {
-      console.log(response.data)
-      //如果成功就導到登入頁面
-      if(response.data.success){
-        next()
-        // vm.$router.push('/')
-      }
-    })
+  if(!to.meta.requiresAuth){
+    //直接放行
+    next()
   }
   else{
-    //直接放行
-    next({
-      path:'/login'
+    //不放行
+    const api = `${process.env.VUE_APP_API}/api/user/check`
+    axios.post(api).then((response)  =>{
+      console.log('response.data',response.data);
+      //如果失敗就導到登入頁面
+      if(!response.data.success){
+        next({
+          path:'/login'
+        })
+        return
+      }
+      //如果成功就導到登入頁面
+      next()
     })
   }
-  
 })

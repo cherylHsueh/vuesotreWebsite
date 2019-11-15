@@ -7,11 +7,11 @@
 export default {
   name:'App',
   created(){
-    const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMEPATH}/products`
+    // const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMEPATH}/products`
 
-    this.$http.get(api).then((response) => {
-      // console.log(response.data)
-    })
+    // this.$http.get(api).then((response) => {
+    //   // console.log(response.data)
+    // })
   }
 }
 </script>

@@ -2,13 +2,21 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import 'bootstrap'
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
+import '@fortawesome/fontawesome-free/css/all.css'
 
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import './bus'
+import currencyFilter from './filters/currency'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
+
+Vue.component('Loading',Loading)
+Vue.filter('currency',currencyFilter)
 
 //加入這段後， 有一段後端傳來的session，session就會把這一段存在前端，每次vue在發送API時，就會幫你把這段session自動帶存在你的cookie裡。在你每次發送api時，他也會自動帶往後端送。
 axios.defaults.withCredentials = true // default

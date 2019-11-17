@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<loading :active.sync="isLoading" ></loading>
 		<div class="text-right mt-4">
 			<button class="btn btn-primary" data-toggle="modal" data-target="#productModal" @click="openModal(true)">建立新的產品</button>
 		</div>
@@ -17,10 +18,10 @@
 					<td>{{item.category}}</td>
 					<td>{{item.title}}</td>
 					<td class="text-right">
-						{{item.origin_price}}
+						{{item.origin_price | currency}}
 					</td>
 					<td class="text-right">
-						{{item.price}}
+						{{item.price | currency}}
 					</td>
 					<td>
 						<span v-if="item.is_enabled" class="text-success">啟用</span>
@@ -33,7 +34,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<!-- Modal -->
+		<!-- 新增/修改Modal -->
 		<div class="modal fade" id="productModal" tabindex="-1" role="dialog"
   			aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-lg" role="document">
@@ -55,12 +56,12 @@
 								</div>
 								<div class="form-group">
 									<label for="customFile">或 上傳圖片
-										<i class="fas fa-spinner fa-spin"></i>
+										<i class="fas fa-spinner fa-spin" v-if="status.fileUploading"></i>
 									</label>
 									<input type="file" id="customFile" class="form-control"
-										ref="files">
+										ref="files"  @change="uploadFile">
 								</div>
-								<img img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80" class="img-fluid" alt="" :src="tempProduct.image">
+								<img img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80" class="img-fluid" alt="" :src="tempProduct.imageUrl">
 							</div>
 							<div class="col-sm-8">
 								<div class="form-group">
@@ -125,7 +126,6 @@
 				</div>
 			</div>
 		</div>
-
 		<!-- 刪除Modal -->
 		<div class="modal fade" id="delProductModal" tabindex="-1" role="dialog"
 			aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -148,30 +148,47 @@
 				</div>
 				</div>
 			</div>
-			</div>
+		</div>
+		<!-- Pagination -->
+		<pagination :pagination="pagination"
+			@chageCurrentPage="getProducts"
+		/>
 	</div>
 </template>
 
 <script>
 import $ from 'jquery'
+import Pagination from '../Pagination'
 	export default {
+		components:{
+			Pagination
+		},
 		data() {
 			return {
 				products:[],
+				pagination :{},
 				tempProduct:{},
 				isNew : false,
-				proudctId : -1
+				proudctId : -1,
+				isLoading : false,
+				status : {
+					fileUploading : false
+				}
 			}
 		},
 		created() {
 			this.getProducts()
 		},
 		methods: {
-			getProducts(){
-				const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMEPATH}/products`
+			getProducts(page = 1){//使用ES6參數預設值
+				const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMEPATH}/products?page=${page}`
 				const vm = this
+				vm.isLoading = true
 				this.$http.get(api).then((response) => {
+					vm.isLoading = false
 					vm.products = response.data.products
+					vm.pagination = response.data.pagination
+					console.log('vm.products',response.data); 
 				})
 			},
 			openModal(isNew,item){
@@ -214,13 +231,35 @@ import $ from 'jquery'
 					if(response.data.success){
 						$('#delProductModal').modal('hide')
 						vm.getProducts()
+						console.log('刪除成功');
 					}else{
 						$('#delProductModal').modal('hide')
 						vm.getProducts()
 						console.log('刪除失敗');
 					}
 				})
-				
+			},
+			uploadFile(){
+				const uploadedFile = this.$refs.files.files[0]
+				const vm = this
+				vm.status.fileUploading = true
+				const formData = new FormData()
+				formData.append('file-to-upload', uploadedFile)
+				const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMEPATH}/admin/upload`
+				this.$http.post(url,formData,{
+					headers:{
+						'Content-Type':'multipart/form-data'
+					}
+				}).then((response) =>{
+					if(response.data.success){
+						vm.status.fileUploading = false
+						// vm.tempProduct.imageUrl = response.data.imageUrl
+						vm.$set(vm.tempProduct,'imageUrl',response.data.imageUrl)
+					}else{
+						console.log('response.data',response.data);
+						this.$bus.$emit('message:push',response.data.message,'danger')
+					}
+				})
 			}
 		},
 	}

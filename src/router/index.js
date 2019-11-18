@@ -31,6 +31,31 @@ const routes = [
         name:'Products',
         component:()=>import('../components/pages/Products.vue'),
         meta: { requiresAuth: true }
+      },
+      {
+        path:'Order',
+        name:'Order',
+        component:()=>import('../components/pages/Order.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path:'Coupon',
+        name:'Coupon',
+        component:()=>import('../components/pages/Coupon.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+  {
+    path:'/',
+    name:'Dashboard',
+    component:()=>import('../components/Dashboard.vue'),
+    meta: { requiresAuth: true }, //路由訊息，判斷基準
+    children:[
+      {
+        path:'customer_order',
+        name:'CustomerOrder',
+        component:()=>import('../components/pages/CustomerOrder.vue'),
       }
     ]
   },

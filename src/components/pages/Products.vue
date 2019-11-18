@@ -181,14 +181,13 @@ import Pagination from '../Pagination'
 		},
 		methods: {
 			getProducts(page = 1){//使用ES6參數預設值
-				const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMEPATH}/products?page=${page}`
+				const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_CUSTOMEPATH}/admin/products?page=${page}`
 				const vm = this
 				vm.isLoading = true
 				this.$http.get(api).then((response) => {
 					vm.isLoading = false
 					vm.products = response.data.products
 					vm.pagination = response.data.pagination
-					console.log('vm.products',response.data); 
 				})
 			},
 			openModal(isNew,item){

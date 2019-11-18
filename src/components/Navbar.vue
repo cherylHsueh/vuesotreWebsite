@@ -5,7 +5,7 @@
 		<input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
 		<ul class="navbar-nav px-3">
 			<li class="nav-item text-nowrap">
-			<a class="nav-link" href="#">Sign out</a>
+			<a class="nav-link" href="#" @click="signOut">Sign out</a>
 			</li>
 		</ul>
 		</nav>
@@ -14,7 +14,24 @@
 
 <script>
 	export default {
-		
+		data() {
+			return {
+				
+			}
+		},
+		methods: {
+			signOut(){
+				const api = `${process.env.VUE_APP_API}/logout`
+				const vm = this
+				this.$http.post(api).then((response) => {
+					console.log(response.data)
+					//如果成功就導到首頁
+					if(response.data.success){
+						vm.$router.push('/login')
+					}
+				})
+			}
+		},
 	}
 </script>
 

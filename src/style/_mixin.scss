@@ -1,0 +1,104 @@
+$small :  480px ; //小螢幕斷點
+$smallUp: 481px;
+$mobile : 767px; //手機斷點
+$medium:  768px; //平板斷點
+$desktop : 1024px; //桌機斷點
+$big : 1920px;//大螢幕斷點
+
+
+//RWD斷點判斷函數
+@mixin rwd ($breakpoint) {
+    @if $breakpoint == small{
+        @media all and (max-width:$small){
+            @content;
+        }
+    }
+    @else if $breakpoint == mobile {
+        @media all and (min-width:$smallUp) and(max-width: $mobile)  {
+            @content;
+        }
+    }
+    @else if $breakpoint== medium {
+        @media all and (min-width: $medium) {
+            @content;
+        }
+    }
+    @else if $breakpoint == desktop {
+        @media all and (min-width: $desktop) {
+            @content;
+        }
+    }
+    @else if $breakpoint == big{
+        @media all and (min-width:$big){
+            @content;
+        }
+    }
+}
+//創造格線系統迴圈函數
+@mixin grid($attr , $num) {
+    .cl-#{$attr}-#{1},.cl-#{$attr}-#{2},.cl-#{$attr}-#{3},.cl-#{$attr}-#{4},.cl-#{$attr}-#{5},.cl-#{$attr}-#{6},
+    .cl-#{$attr}-#{7},.cl-#{$attr}-#{8},.cl-#{$attr}-#{9},.cl-#{$attr}-#{10},.cl-#{$attr}-#{11},.cl-#{$attr}-#{12}{
+        float: left;
+        box-sizing: border-box;
+    };
+    @for $i from 1 through $num {
+       .cl-#{$attr}-#{$i}{
+          width: ($i / $num) * 100%;
+        }
+    }
+}
+
+%m-auto{
+ margin: 0 auto;   
+}
+
+//wrapper容器變更函數
+// @mixin wrapper($wrapperwidth){
+//     .wrapper{
+//     max-width: $wrapperwidth;
+//     width: 100%;
+//     }
+// }
+.wrapper{
+    @extend %m-auto;
+    max-width: 1200px;
+    width: 100%;
+}
+
+@mixin fontsize($h2size,$h3size,$h4size,$psize){
+    h2{
+        font-size:$h2size;
+    }
+    h3{
+        font-size:$h3size;
+    }
+    h4{
+        font-size:$h4size;
+    }
+    p{
+        font-size:$psize;
+    }
+}
+
+
+//RWD判斷 <- 格線與容器
+@include rwd(small){
+    @include grid(sm,12);
+    @include fontsize(26px,20px,18px,16px);
+}
+@include rwd(mobile){
+    @include grid(s,12);
+    @include fontsize(26px,20px,18px,16px);
+}
+@include rwd(medium){
+    @include grid(md,12);
+    @include fontsize(32px,24px,18px,16px);
+}
+@include rwd(desktop){
+    @include grid(xl,12);
+ }
+@include rwd(big){
+    @include grid(xxl,12);
+} 
+
+
